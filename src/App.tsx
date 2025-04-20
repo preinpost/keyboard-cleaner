@@ -38,7 +38,6 @@ function App() {
             <button onClick={stop}>입력 차단 해제</button>
         )}
       </div>
-      
     </main>
   );
 }
