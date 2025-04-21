@@ -28,14 +28,14 @@ function App() {
   return (
     <main className="container">
       <h1>Keyboard Cleaner</h1>
-      <h3>{isRunning === true? "키보드 입력 방지 상태 입니다." : "키보드 입력 가능 상태 입니다."}</h3>
+      <h3>{isRunning === true ? "Keyboard input is blocked." : "Keyboard input is enabled."}</h3>
 
       <div className="row">
 
         {isRunning === false ? (
-          <button onClick={start}>입력 차단</button>
+          <button onClick={start}>Block Input</button>
         ) : (
-            <button onClick={stop}>입력 차단 해제</button>
+            <button onClick={stop}>Unblock Input</button>
         )}
       </div>
     </main>
