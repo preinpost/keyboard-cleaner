@@ -4,21 +4,27 @@ Keyboard Cleaner is a cross-platform desktop application built with Rust and Tau
 
 # Support
 
-- macos
+-   macos
 
 ## Features
 
-- Temporarily disables all keyboard input for safe cleaning
-- Simple and intuitive user interface
-- Lightweight and fast, thanks to Rust and Tauri
+![capture](./public/capture.png)
+
+-   Temporarily disables all keyboard input for safe cleaning
+-   Simple and intuitive user interface
+-   Lightweight and fast, thanks to Rust and Tauri
+
+## Permissions
+
+This app requires permission in `System Settings > Privacy & Security > Accessibility` to block keyboard events.
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Rust](https://www.rust-lang.org/tools/install)
-- [Node.js](https://nodejs.org/) (for Tauri frontend)
-- [Tauri CLI](https://tauri.app/v1/guides/getting-started/prerequisites/)
+-   [Rust](https://www.rust-lang.org/tools/install)
+-   [Node.js](https://nodejs.org/) (for Tauri frontend)
+-   [Tauri CLI](https://tauri.app/v1/guides/getting-started/prerequisites/)
 
 ### Installation
 
@@ -53,9 +59,9 @@ The built application will be available in the `src-tauri/target/release/bundle`
 ## Usage
 
 1. Launch the application.
-2. Click the "Start Cleaning" button to disable keyboard input.
+2. Click the "Block Input" button to disable keyboard input.
 3. Clean your keyboard safely.
-4. Click "Stop Cleaning" or use the provided shortcut to re-enable keyboard input.
+4. Click "UnBlock Input" to re-enable keyboard input.
 
 ## License
 

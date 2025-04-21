@@ -3631,6 +3631,7 @@ dependencies = [
 name = "tauri-keyboard-cleaner"
 version = "1.1.0"
 dependencies = [
+ "anyhow",
  "core-foundation",
  "core-graphics",
  "serde",

@@ -10,6 +10,7 @@ use std::{
 };
 use tauri::{AppHandle, Emitter};
 use tracing::debug;
+use anyhow::{anyhow, Ok};
 
 #[link(name = "ApplicationServices", kind = "framework")]
 unsafe extern "C" {
@@ -39,6 +40,8 @@ unsafe extern "C" {
         keyDown: bool,
     ) -> *mut c_void;
     pub fn CGEventPost(tap: u32, event: *mut c_void);
+
+    pub fn AXIsProcessTrusted() -> bool;
 }
 
 const K_CG_HID_EVENT_TAP: u32 = 0;
@@ -61,11 +64,30 @@ extern "C" fn keyboard_callback(
     ptr::null_mut()
 }
 
+fn is_accessibility_trusted() -> bool {
+    unsafe { AXIsProcessTrusted() }
+}
+
 static HANDLE: OnceLock<Mutex<Option<std::thread::JoinHandle<()>>>> = OnceLock::new();
 static RUNLOOP: AtomicPtr<c_void> = AtomicPtr::new(std::ptr::null_mut());
 
-pub fn start() {
+pub fn start() -> anyhow::Result<()> {
     debug!("start");
+    if !is_accessibility_trusted() {
+        debug!("접근성 권한이 없습니다. start()를 중단합니다.");
+
+        // macOS 접근성 설정 페이지 자동으로 열기
+        #[cfg(target_os = "macos")]
+        {
+            use std::process::Command;
+            let _ = Command::new("open")
+                .arg("x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")
+                .spawn();
+        }
+
+        return Err(anyhow!("Accessibility permission not granted"));
+    }
+
     let event_mask = cg_event_mask_bit(K_CG_EVENT_KEY_DOWN) | cg_event_mask_bit(K_CG_EVENT_KEY_UP);
 
     let thread = std::thread::spawn(move || unsafe {
@@ -95,9 +117,11 @@ pub fn start() {
     HANDLE.get_or_init(|| Mutex::new(None));
     let mut handle_guard = HANDLE.get().unwrap().lock().unwrap();
     *handle_guard = Some(thread);
+
+    Ok(())
 }
 
-pub fn stop(app: AppHandle) {
+pub fn stop() -> anyhow::Result<()> {
     debug!("stop");
     let runloop = RUNLOOP.load(Ordering::SeqCst);
     if !runloop.is_null() {
@@ -118,8 +142,9 @@ pub fn stop(app: AppHandle) {
         if let Some(thread) = handle_guard.take() {
             let _ = thread.join();
             debug!("Stopping thread");
-            app.emit("keyboard_unblocked", ()).ok();
         }
     }
     RUNLOOP.store(std::ptr::null_mut(), Ordering::SeqCst);
+
+    Ok(())
 }

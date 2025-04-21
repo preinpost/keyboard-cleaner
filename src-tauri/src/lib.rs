@@ -1,5 +1,5 @@
 use key_block::{start, stop};
-use tauri::AppHandle;
+use tauri::{AppHandle, Emitter};
 
 pub mod key_block;
 
@@ -10,13 +10,25 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn start_command() {
-    start();
+fn start_command(app: AppHandle) -> bool {
+    let result = start();
+
+    if result.is_ok() {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 #[tauri::command]
-fn stop_command(app: AppHandle) {
-    stop(app);
+fn stop_command(app: AppHandle) -> bool{
+    let result = stop();
+
+    if result.is_ok() {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
